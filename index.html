@@ -322,12 +322,15 @@
                 else {
                     let html = "";
                     menus.forEach(menu => {
-                        const htmlLimpio = menu.htmlMenu.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+                        // AQUÍ ESTÁ LA MAGIA: Eliminamos los saltos de línea (\n y \r) que rompían el botón
+                        const htmlLimpio = menu.htmlMenu.replace(/'/g, "&apos;").replace(/"/g, "&quot;").replace(/\n/g, '').replace(/\r/g, '');
+                        
                         html += `<div class="receta-item"><div><strong>Guardado el:</strong> ${menu.fechaTexto}</div>
                                 <div class="acciones-receta"><button class="btn-cargar" onclick="cargarMenuEnTabla('${htmlLimpio}')">Cargar</button>
                                 <button class="btn-borrar btn-borrar-menu" data-id="${menu.id}">Borrar</button></div></div>`;
                     });
                     cont.innerHTML = html;
+                    
                     document.querySelectorAll('.btn-borrar-menu').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
                             if(confirm("¿Eliminar menú?")) { await deleteDoc(doc(db, "menus_guardados", e.target.getAttribute('data-id'))); abrirModalMenus(); }
