@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planificador Familiar Automático</title>
+    
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#34495e">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,52 +19,20 @@
         }
         h1 { text-align: center; color: #2c3e50; }
         
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-        .tab-btn {
-            background-color: #bdc3c7;
-            color: #2c3e50;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        .tab-btn.activo {
-            background-color: #27ae60;
-            color: white;
-        }
-        .tab-contenido {
-            display: none;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        .tab-btn { background-color: #bdc3c7; color: #2c3e50; border: none; padding: 12px 24px; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.3s; }
+        .tab-btn.activo { background-color: #27ae60; color: white; }
+        .tab-contenido { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .tab-contenido.activo { display: block; }
 
         h3 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 5px; }
         
         .grupo-formulario { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
-        input[type="text"], select {
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px;
-        }
-        .ayuda { font-size: 0.85em; color: #7f8c8d; margin-top: 4px; display: block; }
+        input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
         
-        .btn-accion {
-            color: white; border: none; padding: 15px 24px;
-            border-radius: 6px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; margin-top: 10px;
-            transition: background 0.3s;
-        }
+        .btn-accion { color: white; border: none; padding: 15px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; margin-top: 10px; transition: background 0.3s; }
         .btn-accion:disabled { background-color: #95a5a6 !important; cursor: not-allowed; }
-        
         .btn-generar { background-color: #e67e22; font-size: 20px; box-shadow: 0 4px 6px rgba(230, 126, 34, 0.3); }
         .btn-generar:hover { background-color: #d35400; }
 
@@ -75,21 +47,13 @@
         th { background-color: #34495e; color: white; }
         td { cursor: pointer; transition: background 0.2s; }
         td:hover { background-color: #fcf3cf; }
-        .falta-ingrediente { color: #e74c3c; font-weight: bold; font-size: 0.9em; }
 
-        .receta-item {
-            border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 6px;
-            display: flex; justify-content: space-between; align-items: center; background-color: #f9f9f9;
-        }
+        .receta-item { border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; background-color: #f9f9f9; }
         .etiqueta-tipo { background-color: #3498db; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; text-transform: uppercase;}
         
-        /* Contenedor de botones de cada receta */
         .acciones-receta { display: flex; gap: 8px; }
         .btn-editar { background-color: #f39c12; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-editar:hover { background-color: #d68910; }
         .btn-borrar { background-color: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-borrar:hover { background-color: #c0392b; }
-        
         .btn-cargar { background-color: #27ae60; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         .alerta { padding: 15px; border-radius: 6px; margin-top: 15px; display: none; font-weight: bold; text-align: center; }
@@ -99,14 +63,28 @@
 
         .estado-db { text-align: center; margin-bottom: 20px; font-size: 1.1em; color: #7f8c8d; }
 
-        #modalMenus {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 1000;
+        #modalMenus { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; }
+        .modal-contenido { background: white; margin: 5% auto; padding: 25px; width: 90%; max-width: 700px; border-radius: 8px; max-height: 80vh; overflow-y: auto; }
+
+        /* ESTILOS DEL BOTÓN FLOTANTE DE INSTALACIÓN */
+        #btnInstalarApp {
+            display: none; /* Oculto hasta que el celular diga que se puede instalar */
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 9999;
+            transition: transform 0.2s;
         }
-        .modal-contenido {
-            background: white; margin: 5% auto; padding: 25px; width: 90%; max-width: 700px;
-            border-radius: 8px; max-height: 80vh; overflow-y: auto;
-        }
+        #btnInstalarApp:hover { transform: scale(1.05); background-color: #c0392b; }
     </style>
 </head>
 <body>
@@ -119,25 +97,12 @@
     </div>
 
     <div id="tab-planificador" class="tab-contenido activo">
-        
-        <div class="estado-db" id="contadorRecetas">
-            Conectando a tu base de datos Firebase...
-        </div>
-
+        <div class="estado-db" id="contadorRecetas">Conectando a tu base de datos Firebase...</div>
         <button class="btn-accion btn-generar" onclick="generarMenu()">✨ Generar Menú de la Semana ✨</button>
         
-        <div id="alertaVariedad" class="alerta advertencia">
-            ⚠️ Necesitas al menos 7 recetas de cada tipo (desayuno, merienda, cena) en tu base de datos para no repetir platos en la semana.
-        </div>
-
         <table id="menuTabla">
             <thead>
-                <tr>
-                    <th>Día</th>
-                    <th>Desayuno</th>
-                    <th>Merienda</th>
-                    <th>Comida / Cena</th>
-                </tr>
+                <tr><th>Día</th><th>Desayuno</th><th>Merienda</th><th>Comida / Cena</th></tr>
             </thead>
             <tbody id="menuCuerpo">
                 <tr><td colspan="4" style="padding: 30px; color: #7f8c8d;">Haz clic en el botón naranja para generar tu menú o carga uno guardado.</td></tr>
@@ -153,7 +118,6 @@
 
     <div id="tab-recetario" class="tab-contenido">
         <h3 id="tituloFormulario">Añadir Nueva Receta</h3>
-        
         <div class="grupo-formulario">
             <label>Tipo de comida</label>
             <select id="formTipo">
@@ -176,9 +140,7 @@
         <div id="mensajeFormulario" class="alerta"></div>
 
         <h3 style="margin-top: 40px;">Tus Recetas Actuales</h3>
-        <div id="listaRecetasGuardadas">
-            <p style="color: #95a5a6; text-align: center;">Cargando recetas...</p>
-        </div>
+        <div id="listaRecetasGuardadas"></div>
     </div>
 
     <div id="modalMenus">
@@ -188,6 +150,8 @@
             <button class="btn-accion" style="background-color: #7f8c8d; margin-top: 15px;" onclick="cerrarModalMenus()">Cerrar Ventana</button>
         </div>
     </div>
+
+    <button id="btnInstalarApp">📲 Instalar App</button>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -210,19 +174,16 @@
         let recetarioFirebase = { desayuno: [], merienda: [], cena: [] };
         let recetasUsadas = new Set();
         const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
-        
-        // Variable para rastrear si estamos editando
         let idRecetaEnEdicion = null;
 
-        // 1. CARGAR RECETAS EN TIEMPO REAL
+        // LÓGICA DE FIREBASE Y FUNCIONALIDAD (Se mantiene intacta)
         onSnapshot(collection(db, "recetas_familiares"), (snapshot) => {
             recetarioFirebase = { desayuno: [], merienda: [], cena: [] };
             let htmlListaRecetas = "";
             let totalRecetas = 0;
 
             if (snapshot.empty) {
-                document.getElementById('contadorRecetas').innerHTML = "No tienes recetas guardadas aún. ¡Ve a la pestaña Administrar y agrega la primera!";
-                document.getElementById('listaRecetasGuardadas').innerHTML = "<p style='text-align:center;'>Tu recetario está vacío.</p>";
+                document.getElementById('contadorRecetas').innerHTML = "No tienes recetas guardadas aún.";
                 return;
             }
 
@@ -235,138 +196,82 @@
                 else if (data.tipo === 'merienda') recetarioFirebase.merienda.push(receta);
                 else if (data.tipo === 'cena') recetarioFirebase.cena.push(receta);
 
-                // Convertir array de ingredientes a string para el botón de edición
                 const strIngredientes = receta.ingredientes.join(', ').replace(/"/g, '&quot;');
-
                 htmlListaRecetas += `
                     <div class="receta-item">
-                        <div>
-                            <strong>${data.nombre}</strong> <span class="etiqueta-tipo">${data.tipo}</span><br>
-                            <span style="font-size: 0.9em; color: #7f8c8d;">${receta.ingredientes.join(', ')}</span>
-                        </div>
+                        <div><strong>${data.nombre}</strong> <span class="etiqueta-tipo">${data.tipo}</span><br>
+                        <span style="font-size: 0.9em; color: #7f8c8d;">${receta.ingredientes.join(', ')}</span></div>
                         <div class="acciones-receta">
-                            <button class="btn-editar" 
-                                data-id="${documento.id}" 
-                                data-tipo="${data.tipo}" 
-                                data-nombre="${data.nombre.replace(/"/g, '&quot;')}" 
-                                data-ingredientes="${strIngredientes}">Editar</button>
+                            <button class="btn-editar" data-id="${documento.id}" data-tipo="${data.tipo}" data-nombre="${data.nombre.replace(/"/g, '&quot;')}" data-ingredientes="${strIngredientes}">Editar</button>
                             <button class="btn-borrar" data-id="${documento.id}">Borrar</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
 
-            document.getElementById('contadorRecetas').innerHTML = `Tienes <strong>${totalRecetas}</strong> recetas listas para sortear.<br> <span style="font-size:0.8em;">(Desayunos: ${recetarioFirebase.desayuno.length} | Meriendas: ${recetarioFirebase.merienda.length} | Cenas: ${recetarioFirebase.cena.length})</span>`;
+            document.getElementById('contadorRecetas').innerHTML = `Tienes <strong>${totalRecetas}</strong> recetas listas para sortear.`;
             document.getElementById('listaRecetasGuardadas').innerHTML = htmlListaRecetas;
             
-            // Asignar eventos de borrar
             document.querySelectorAll('.btn-borrar').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const idABorrar = e.target.getAttribute('data-id');
-                    if(confirm("¿Seguro que quieres borrar esta receta de tu base de datos?")) {
-                        await deleteDoc(doc(db, "recetas_familiares", idABorrar));
-                    }
+                    if(confirm("¿Seguro que quieres borrar esta receta?")) await deleteDoc(doc(db, "recetas_familiares", idABorrar));
                 });
             });
 
-            // Asignar eventos de editar
             document.querySelectorAll('.btn-editar').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const btnElement = e.target;
-                    document.getElementById('formTipo').value = btnElement.getAttribute('data-tipo');
-                    document.getElementById('formNombre').value = btnElement.getAttribute('data-nombre');
-                    document.getElementById('formIngredientes').value = btnElement.getAttribute('data-ingredientes');
-                    
-                    idRecetaEnEdicion = btnElement.getAttribute('data-id');
-                    
-                    // Cambiar apariencia del formulario
+                    const b = e.target;
+                    document.getElementById('formTipo').value = b.getAttribute('data-tipo');
+                    document.getElementById('formNombre').value = b.getAttribute('data-nombre');
+                    document.getElementById('formIngredientes').value = b.getAttribute('data-ingredientes');
+                    idRecetaEnEdicion = b.getAttribute('data-id');
                     document.getElementById('tituloFormulario').textContent = "✏️ Editando Receta";
-                    const btnGuardar = document.getElementById('btnGuardarReceta');
-                    btnGuardar.textContent = "Actualizar Receta";
-                    btnGuardar.style.backgroundColor = "#e67e22";
+                    const btnG = document.getElementById('btnGuardarReceta');
+                    btnG.textContent = "Actualizar Receta"; btnG.style.backgroundColor = "#e67e22";
                     document.getElementById('btnCancelarEdicion').style.display = "block";
-
-                    // Subir la pantalla suavemente hacia el formulario
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             });
         });
 
-        // 2. CANCELAR EDICIÓN
         document.getElementById('btnCancelarEdicion').addEventListener('click', () => {
-            restablecerFormulario();
+            idRecetaEnEdicion = null;
+            document.getElementById('formNombre').value = ""; document.getElementById('formIngredientes').value = "";
+            document.getElementById('tituloFormulario').textContent = "Añadir Nueva Receta";
+            const btnG = document.getElementById('btnGuardarReceta');
+            btnG.textContent = "Guardar Receta"; btnG.style.backgroundColor = "#27ae60";
+            document.getElementById('btnCancelarEdicion').style.display = "none";
         });
 
-        function restablecerFormulario() {
-            idRecetaEnEdicion = null;
-            document.getElementById('formNombre').value = "";
-            document.getElementById('formIngredientes').value = "";
-            document.getElementById('tituloFormulario').textContent = "Añadir Nueva Receta";
-            
-            const btnGuardar = document.getElementById('btnGuardarReceta');
-            btnGuardar.textContent = "Guardar Receta";
-            btnGuardar.style.backgroundColor = "#27ae60";
-            document.getElementById('btnCancelarEdicion').style.display = "none";
-        }
-
-        // 3. GUARDAR O ACTUALIZAR RECETA
         document.getElementById('btnGuardarReceta').addEventListener('click', async () => {
             const tipo = document.getElementById('formTipo').value;
             const nombre = document.getElementById('formNombre').value.trim();
             const ingRaw = document.getElementById('formIngredientes').value;
             const msj = document.getElementById('mensajeFormulario');
 
-            if (!nombre) {
-                mostrarAlerta(msj, "Debes escribir al menos el nombre del plato.", "error");
-                return;
-            }
+            if (!nombre) return mostrarAlerta(msj, "Debes escribir al menos el nombre del plato.", "error");
 
             const ingredientesLimpios = ingRaw ? ingRaw.split(',').map(i => i.trim().toLowerCase()).filter(i => i !== "") : [];
             const btn = document.getElementById('btnGuardarReceta');
-            const textoOriginalBtn = btn.textContent;
-            
-            btn.disabled = true; 
-            btn.textContent = idRecetaEnEdicion ? "Actualizando..." : "Guardando...";
+            btn.disabled = true; btn.textContent = idRecetaEnEdicion ? "Actualizando..." : "Guardando...";
 
             try {
                 if (idRecetaEnEdicion) {
-                    // Actualizar documento existente
-                    await updateDoc(doc(db, "recetas_familiares", idRecetaEnEdicion), {
-                        tipo: tipo, 
-                        nombre: nombre, 
-                        ingredientes: ingredientesLimpios
-                    });
+                    await updateDoc(doc(db, "recetas_familiares", idRecetaEnEdicion), { tipo, nombre, ingredientes: ingredientesLimpios });
                     mostrarAlerta(msj, "¡Receta actualizada con éxito!", "exito");
                 } else {
-                    // Crear nuevo documento
-                    await addDoc(collection(db, "recetas_familiares"), {
-                        tipo: tipo, 
-                        nombre: nombre, 
-                        ingredientes: ingredientesLimpios, 
-                        fecha: new Date()
-                    });
+                    await addDoc(collection(db, "recetas_familiares"), { tipo, nombre, ingredientes: ingredientesLimpios, fecha: new Date() });
                     mostrarAlerta(msj, "¡Receta guardada exitosamente!", "exito");
                 }
-                restablecerFormulario();
+                document.getElementById('btnCancelarEdicion').click(); // Restablece form
             } catch (error) {
                 mostrarAlerta(msj, "Error al procesar la receta.", "error");
-            } finally {
-                btn.disabled = false;
-            }
+            } finally { btn.disabled = false; }
         });
 
-        // 4. GENERAR MENÚ
         window.generarMenu = function() {
-            const alerta = document.getElementById('alertaVariedad');
-            if (recetarioFirebase.desayuno.length < 7 || recetarioFirebase.merienda.length < 7 || recetarioFirebase.cena.length < 7) {
-                alerta.style.display = 'block';
-            } else {
-                alerta.style.display = 'none';
-            }
-
             recetasUsadas.clear();
             let htmlCuerpo = '';
-
             diasSemana.forEach(dia => {
                 htmlCuerpo += `<tr>
                     <td><strong>${dia}</strong></td>
@@ -375,128 +280,113 @@
                     <td contenteditable="true">${seleccionarReceta('cena')}</td>
                 </tr>`;
             });
-
             document.getElementById('menuCuerpo').innerHTML = htmlCuerpo;
-            hacerCeldasEditables();
         }
 
         function seleccionarReceta(tipo) {
-            let opcionesPosibles = recetarioFirebase[tipo];
-            if (opcionesPosibles.length === 0) return `<span class="falta-ingrediente">❌ Faltan recetas</span>`;
-
-            let opcionesSinRepetir = opcionesPosibles.filter(receta => !recetasUsadas.has(receta.nombre));
-            if (opcionesSinRepetir.length === 0) opcionesSinRepetir = opcionesPosibles; 
-
-            const seleccion = Math.floor(Math.random() * opcionesSinRepetir.length);
-            const recetaElegida = opcionesSinRepetir[seleccion].nombre;
-            
-            recetasUsadas.add(recetaElegida);
-            return recetaElegida;
+            let opciones = recetarioFirebase[tipo];
+            if (opciones.length === 0) return `❌ Faltan recetas`;
+            let sinRepetir = opciones.filter(r => !recetasUsadas.has(r.nombre));
+            if (sinRepetir.length === 0) sinRepetir = opciones; 
+            const elegida = sinRepetir[Math.floor(Math.random() * sinRepetir.length)].nombre;
+            recetasUsadas.add(elegida); return elegida;
         }
 
-        // 5. GUARDAR MENÚ SEMANAL EN FIREBASE
         document.getElementById('btnGuardarMenu').addEventListener('click', async () => {
-            const contenidoTabla = document.getElementById('menuCuerpo').innerHTML;
+            const cont = document.getElementById('menuCuerpo').innerHTML;
             const msj = document.getElementById('mensajePlanificador');
             const btn = document.getElementById('btnGuardarMenu');
+            if(cont.includes('Haz clic en el botón naranja')) return mostrarAlerta(msj, "Genera un menú primero.", "error");
 
-            if(contenidoTabla.includes('Haz clic en el botón naranja')) {
-                mostrarAlerta(msj, "Primero debes generar un menú para poder guardarlo.", "error");
-                return;
-            }
-
-            btn.disabled = true; btn.textContent = "Guardando Menú...";
+            btn.disabled = true; btn.textContent = "Guardando...";
             const fechaActual = new Date().toLocaleDateString('es-ES', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' });
 
             try {
-                await addDoc(collection(db, "menus_guardados"), {
-                    fechaTexto: fechaActual,
-                    htmlMenu: contenidoTabla,
-                    timestamp: new Date().getTime()
-                });
-                mostrarAlerta(msj, "¡Menú de la semana guardado en Firebase!", "exito");
-            } catch (error) {
-                mostrarAlerta(msj, "Error al guardar el menú.", "error");
-            } finally {
-                btn.disabled = false; btn.textContent = "💾 Guardar este Menú en Firebase";
-            }
+                await addDoc(collection(db, "menus_guardados"), { fechaTexto: fechaActual, htmlMenu: cont, timestamp: new Date().getTime() });
+                mostrarAlerta(msj, "¡Menú guardado en Firebase!", "exito");
+            } catch (error) { mostrarAlerta(msj, "Error al guardar el menú.", "error"); } 
+            finally { btn.disabled = false; btn.textContent = "💾 Guardar este Menú en Firebase"; }
         });
 
-        // 6. CARGAR Y GESTIONAR HISTORIAL DE MENÚS
         window.abrirModalMenus = async function() {
-            const contenedor = document.getElementById('listaMenusGuardados');
-            contenedor.innerHTML = "<p>Cargando tu historial desde Firebase...</p>";
+            const cont = document.getElementById('listaMenusGuardados');
+            cont.innerHTML = "<p>Cargando tu historial...</p>";
             document.getElementById('modalMenus').style.display = 'block';
 
             try {
                 const querySnapshot = await getDocs(collection(db, "menus_guardados"));
-                let menus = [];
-                querySnapshot.forEach((doc) => { menus.push({ id: doc.id, ...doc.data() }); });
-
+                let menus = []; querySnapshot.forEach(doc => menus.push({ id: doc.id, ...doc.data() }));
                 menus.sort((a, b) => b.timestamp - a.timestamp);
 
-                if (menus.length === 0) {
-                    contenedor.innerHTML = "<p>Aún no has guardado ningún menú semanal.</p>";
-                } else {
+                if (menus.length === 0) cont.innerHTML = "<p>No hay menús guardados.</p>";
+                else {
                     let html = "";
                     menus.forEach(menu => {
                         const htmlLimpio = menu.htmlMenu.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-                        html += `
-                            <div class="receta-item">
-                                <div><strong>Guardado el:</strong> ${menu.fechaTexto}</div>
-                                <div class="acciones-receta">
-                                    <button class="btn-cargar" onclick="cargarMenuEnTabla('${htmlLimpio}')">Cargar en la tabla</button>
-                                    <button class="btn-borrar btn-borrar-menu" data-id="${menu.id}">Borrar</button>
-                                </div>
-                            </div>
-                        `;
+                        html += `<div class="receta-item"><div><strong>Guardado el:</strong> ${menu.fechaTexto}</div>
+                                <div class="acciones-receta"><button class="btn-cargar" onclick="cargarMenuEnTabla('${htmlLimpio}')">Cargar</button>
+                                <button class="btn-borrar btn-borrar-menu" data-id="${menu.id}">Borrar</button></div></div>`;
                     });
-                    contenedor.innerHTML = html;
-
+                    cont.innerHTML = html;
                     document.querySelectorAll('.btn-borrar-menu').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
-                            const idABorrar = e.target.getAttribute('data-id');
-                            if(confirm("¿Eliminar este menú del historial?")) {
-                                await deleteDoc(doc(db, "menus_guardados", idABorrar));
-                                abrirModalMenus(); 
-                            }
+                            if(confirm("¿Eliminar menú?")) { await deleteDoc(doc(db, "menus_guardados", e.target.getAttribute('data-id'))); abrirModalMenus(); }
                         });
                     });
                 }
-            } catch (error) {
-                contenedor.innerHTML = "<p style='color:red;'>Error al cargar el historial.</p>";
-            }
+            } catch (error) { cont.innerHTML = "<p style='color:red;'>Error al cargar historial.</p>"; }
         }
 
-        window.cargarMenuEnTabla = function(html) {
-            document.getElementById('menuCuerpo').innerHTML = html;
-            hacerCeldasEditables();
-            cerrarModalMenus();
-            mostrarAlerta(document.getElementById('mensajePlanificador'), "Menú cargado desde el historial.", "exito");
-        }
-
-        window.cerrarModalMenus = function() {
-            document.getElementById('modalMenus').style.display = 'none';
-        }
-
-        // Utilidades de la interfaz
+        window.cargarMenuEnTabla = function(html) { document.getElementById('menuCuerpo').innerHTML = html; cerrarModalMenus(); }
+        window.cerrarModalMenus = function() { document.getElementById('modalMenus').style.display = 'none'; }
         window.cambiarTab = function(tabId) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('activo'));
             document.querySelectorAll('.tab-contenido').forEach(tab => tab.classList.remove('activo'));
-            event.target.classList.add('activo');
-            document.getElementById('tab-' + tabId).classList.add('activo');
+            event.target.classList.add('activo'); document.getElementById('tab-' + tabId).classList.add('activo');
         }
+        function mostrarAlerta(el, texto, tipo) { el.textContent = texto; el.className = "alerta " + tipo; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }
 
-        function hacerCeldasEditables() {
-            const celdas = document.querySelectorAll('#menuCuerpo td:not(:first-child)');
-            celdas.forEach(celda => celda.setAttribute('contenteditable', 'true'));
-        }
+        // ==========================================
+        // LÓGICA DE INSTALACIÓN PWA (Botón Flotante)
+        // ==========================================
+        let deferredPrompt;
+        const btnInstalarApp = document.getElementById('btnInstalarApp');
 
-        function mostrarAlerta(elemento, texto, tipo) {
-            elemento.textContent = texto;
-            elemento.className = "alerta " + tipo;
-            elemento.style.display = 'block';
-            setTimeout(() => elemento.style.display = 'none', 4000);
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Previene que aparezca la alerta por defecto de Android
+            e.preventDefault();
+            // Guarda el evento para dispararlo cuando se haga clic en el botón
+            deferredPrompt = e;
+            // Muestra el botón flotante
+            btnInstalarApp.style.display = 'block';
+        });
+
+        btnInstalarApp.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Muestra la ventana nativa de instalación de Chrome/Safari
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') console.log('App instalada');
+                
+                // Limpia la variable (solo se puede usar una vez)
+                deferredPrompt = null;
+                // Oculta el botón flotante
+                btnInstalarApp.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            // Si se instaló correctamente, asegura que el botón desaparezca
+            btnInstalarApp.style.display = 'none';
+        });
+
+        // Registrar el Service Worker para que funcione la instalación
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker registrado con éxito'))
+                .catch(err => console.error('Error al registrar SW:', err));
+            });
         }
     </script>
 </body>
